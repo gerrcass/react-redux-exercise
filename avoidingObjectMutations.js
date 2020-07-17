@@ -17,12 +17,12 @@ const toggloTodo = (todo) => {
 const testToggloTodo = () => {
   const todoBefore = {
     id: 0,
-    text: "Lear Redux",
+    text: "Learn Redux",
     completed: false,
   };
   const todoAfter = {
     id: 0,
-    text: "Lear Redux",
+    text: "Learn Redux",
     completed: true,
   };
 
