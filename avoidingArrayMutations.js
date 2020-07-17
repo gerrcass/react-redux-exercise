@@ -61,4 +61,4 @@ testRemoveCounter();
 testIncrementCounter();
 
 // console if everything is ok
-console.log("All tests passed.");
+console.log("Avoiding Array Mutations: All tests passed.");
