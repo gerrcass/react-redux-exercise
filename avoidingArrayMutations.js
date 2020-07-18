@@ -1,6 +1,6 @@
 const addCounter = (list) => {
   //using concat() and avoiding push() which is a mutation method
-  return [...list, 0]; // syntax sugar for (ES6 spread operator) --> return list.concat([0]); // since deepFreeze(listBefore) was previously called.
+  return [...list, 0]; // syntax sugar for --> return list.concat([0]); // since deepFreeze(listBefore) was previously called.
 
   /* //Mutation:
    list.push(0)
@@ -10,7 +10,7 @@ const addCounter = (list) => {
 
 const removeCounter = (list, index) => {
   //using slice() and avoiding splice() which is a mutation method
-  return [...list.slice(0, index), ...list.slice(index + 1)]; // syntax sugar for (ES6 spread operator) --> return list.slice(0, index).concat(list.slice(index + 1)); // since deepFreeze(listBefore) was previously called.
+  return [...list.slice(0, index), ...list.slice(index + 1)]; // syntax sugar for --> return list.slice(0, index).concat(list.slice(index + 1)); // since deepFreeze(listBefore) was previously called.
 
   /* //Mutation: 
   list.splice(index, 1);
@@ -19,7 +19,7 @@ const removeCounter = (list, index) => {
 
 const incrementCounter = (list, index) => {
   // using slice() and avoiding list[index]++ which mutate the array
-  return [...list.slice(0, index), list[index] + 1, ...list.slice(index + 1)]; // syntax sugar for (ES6 spread operator) --> return list.slice(0, index).concat(list[index] + 1).concat(list.slice(index + 1)); // since deepFreeze(listBefore) was previously called.
+  return [...list.slice(0, index), list[index] + 1, ...list.slice(index + 1)]; // syntax sugar for --> return list.slice(0, index).concat(list[index] + 1).concat(list.slice(index + 1)); // since deepFreeze(listBefore) was previously called.
 
   /* //Mutation:
   list[index]++;
