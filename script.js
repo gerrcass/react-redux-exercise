@@ -33,7 +33,7 @@ const counter = (state = 0, action) => {
 };
 
 //Creating redux store
-const store = Redux.createStore(counter);
+const storeCounter = Redux.createStore(counter);
 
 // Dumb / Presentational Component.
 const Counter = ({ value, onIncrement, onDecrement }) => (
@@ -48,14 +48,14 @@ const Counter = ({ value, onIncrement, onDecrement }) => (
 const render = () => {
   ReactDOM.render(
     <Counter
-      value={store.getState()}
-      onIncrement={() => store.dispatch({ type: "INCREMENT" })}
-      onDecrement={() => store.dispatch({ type: "DECREMENT" })}
+      value={storeCounter.getState()}
+      onIncrement={() => storeCounter.dispatch({ type: "INCREMENT" })}
+      onDecrement={() => storeCounter.dispatch({ type: "DECREMENT" })}
     />,
     document.getElementById("root")
   );
 };
-store.subscribe(render);
+storeCounter.subscribe(render);
 
 // calling callback for the first time
 render();
