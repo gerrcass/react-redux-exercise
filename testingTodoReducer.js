@@ -40,12 +40,21 @@ const visibilityFilter = (state = "SHOW_ALL", action) => {
   }
 };
 
+/* 
+// creating a top level reducer for the App
 const todoApp = (state = {}, action) => {
   return {
     todos: todos(state.todos, action),
     visibilityFilter: visibilityFilter(state.visibilityFilter, action),
   };
-};
+}; */
+
+// Since the above pattern is so common for most applications, Redux comes with a helper function called combineReducers() to minimize boilerplate code.
+const { combineReducers } = Redux;
+const todoApp = combineReducers({
+  todos,
+  visibilityFilter,
+});
 
 // Creating a Store with the above reducer
 
