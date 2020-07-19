@@ -70,6 +70,25 @@ const FilterLink = ({ filter, currentFilter, children }) => {
   );
 };
 
+const Todo = ({ onClick, completed, text }) => (
+  <li
+    onClick={onClick}
+    style={{
+      textDecoration: completed ? "line-through" : "none",
+    }}
+  >
+    {text}
+  </li>
+);
+
+const TodoList = ({ todos, onTodoClick }) => (
+  <ul>
+    {todos.map((todo) => (
+      <Todo key={todo.id} onClick={() => onTodoClick(todo.id)} {...todo} />
+    ))}
+  </ul>
+);
+
 const getVisibleTodos = (todos, filter) => {
   switch (filter) {
     case "SHOW_ALL":
@@ -80,6 +99,7 @@ const getVisibleTodos = (todos, filter) => {
       return todos.filter((todo) => !todo.completed);
   }
 };
+
 let nextTodoId = 0;
 class TodoApp extends Component {
   render() {
@@ -101,24 +121,11 @@ class TodoApp extends Component {
         >
           Add Todo
         </button>
-        <ul>
-          {visibleTodos.map((todo) => (
-            <li
-              key={todo.id}
-              onClick={() =>
-                store.dispatch({
-                  type: "TOGGLE_TODO",
-                  id: todo.id,
-                })
-              }
-              style={{
-                textDecoration: todo.completed ? "line-through" : "none",
-              }}
-            >
-              {`${todo.text}(${todo.completed})`}
-            </li>
-          ))}
-        </ul>
+
+        <TodoList
+          todos={visibleTodos}
+          onTodoClick={(id) => store.dispatch({ type: "TOGGLE_TODO", id })}
+        />
         <p>
           Show:{" "}
           <FilterLink filter="SHOW_ALL" currentFilter={visibilityFilter}>
