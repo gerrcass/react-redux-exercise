@@ -45,7 +45,7 @@ const todoApp = combineReducers({
   visibilityFilter,
 });
 
-const AppContext = React.createContext();
+const { Provider, connect } = ReactRedux; //import {Provider,connect} from 'react-redux'
 
 // React code
 
@@ -66,36 +66,21 @@ const Link = ({ active, children, onClick }) => {
   );
 };
 
-class FilterLink extends Component {
-  //static contextType = AppContext; // can be used this way instead of FilterLink.contextType = AppContext
-  componentDidMount() {
-    const store = this.context;
-    this.unsubscribe = store.subscribe(() => this.forceUpdate());
-  }
-  componenWillUnmount() {
-    this.unsubscribe();
-  }
-  render() {
-    const props = this.props;
-    const store = this.context;
-    const state = store.getState();
-
-    return (
-      <Link
-        active={props.filter === state.visibilityFilter}
-        onClick={() =>
-          store.dispatch({
-            type: "SET_VISIBILITY_FILTER",
-            filter: props.filter,
-          })
-        }
-      >
-        {props.children}
-      </Link>
-    );
-  }
-}
-FilterLink.contextType = AppContext; //subscribing context to this component (it receives this.context)
+const mapStateToLinkProps = (state, ownProps) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter,
+  };
+};
+const mapDispatchToLinkProps = (dispatch, ownProps) => {
+  return {
+    onClick: () =>
+      dispatch({
+        type: "SET_VISIBILITY_FILTER",
+        filter: ownProps.filter,
+      }),
+  };
+};
+const FilterLink = connect(mapStateToLinkProps, mapDispatchToLinkProps)(Link);
 
 const Footer = () => (
   <p>
@@ -125,15 +110,15 @@ const TodoList = ({ todos, onTodoClick }) => (
 );
 
 let nextTodoId = 0;
-const AddTodo = () => {
+
+let AddTodo = ({ dispatch }) => {
   let input;
-  const store = React.useContext(AppContext); //Hook to subscribe context to this functional component
   return (
     <>
       <input ref={(node) => (input = node)} />
       <button
         onClick={() => {
-          store.dispatch({
+          dispatch({
             type: "ADD_TODO",
             id: nextTodoId++,
             text: input.value,
@@ -146,6 +131,23 @@ const AddTodo = () => {
     </>
   );
 };
+// in here connect() is equivalent to connect(null,null): The default behavior will be to not subscribe to the store and to inject just the dispatch function as a prop.
+AddTodo = connect()(AddTodo);
+
+/* In the expresion connect(null,null): 
+- the first 'null' is telling connect that there's no need to subscribe to the store to get any state (this would be wasteful to do)
+- the second 'null' just avoid the boilerplate code to inject dispatch as a props (end up the same result but with less code)
+
+Otherwise, this would be necessary (but fortunately does not):
+
+AddTodo = connect(
+  (state) => {
+    return {};
+  },
+  (dispatch) => {
+    return { dispatch };
+  }
+)(AddTodo); */
 
 const getVisibleTodos = (todos, filter) => {
   switch (filter) {
@@ -158,27 +160,20 @@ const getVisibleTodos = (todos, filter) => {
   }
 };
 
-class VisibleTodoList extends Component {
-  //static contextType = AppContext; // can be used this way instead of VisibleTodoList.contextType = AppContext
-  componentDidMount() {
-    const store = this.context;
-    this.unsubdcribe = store.subscribe(() => this.forceUpdate());
-  }
-  componenWillUnmount() {
-    this.unsubdcribe();
-  }
-  render() {
-    const store = this.context;
-    const { todos, visibilityFilter } = store.getState();
-    return (
-      <TodoList
-        todos={getVisibleTodos(todos, visibilityFilter)}
-        onTodoClick={(id) => store.dispatch({ type: "TOGGLE_TODO", id })}
-      />
-    );
-  }
-}
-VisibleTodoList.contextType = AppContext; //subscribing context to this component (it receives this.context)
+const mapStateToTodoListProps = (state) => {
+  return {
+    todos: getVisibleTodos(state.todos, state.visibilityFilter),
+  };
+};
+const mapDispatchToTodoListProps = (dispatch) => {
+  return {
+    onTodoClick: (id) => dispatch({ type: "TOGGLE_TODO", id }),
+  };
+};
+const VisibleTodoList = connect(
+  mapStateToTodoListProps,
+  mapDispatchToTodoListProps
+)(TodoList);
 
 const TodoApp = () => (
   <>
@@ -191,8 +186,8 @@ const TodoApp = () => (
 const { createStore } = Redux;
 
 ReactDOM.render(
-  <AppContext.Provider value={createStore(todoApp)}>
+  <Provider store={createStore(todoApp)}>
     <TodoApp />
-  </AppContext.Provider>,
+  </Provider>,
   document.getElementById("root")
 );
