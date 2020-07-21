@@ -45,6 +45,8 @@ const todoApp = combineReducers({
   visibilityFilter,
 });
 
+const AppContext = React.createContext();
+
 // React code
 
 const Link = ({ active, children, onClick }) => {
@@ -65,8 +67,9 @@ const Link = ({ active, children, onClick }) => {
 };
 
 class FilterLink extends Component {
+  //static contextType = AppContext; // can be used this way instead of FilterLink.contextType = AppContext
   componentDidMount() {
-    const { store } = this.props;
+    const store = this.context;
     this.unsubscribe = store.subscribe(() => this.forceUpdate());
   }
   componenWillUnmount() {
@@ -74,7 +77,7 @@ class FilterLink extends Component {
   }
   render() {
     const props = this.props;
-    const { store } = this.props;
+    const store = this.context;
     const state = store.getState();
 
     return (
@@ -92,21 +95,16 @@ class FilterLink extends Component {
     );
   }
 }
+FilterLink.contextType = AppContext; //subscribing context to this component (it receives this.context)
 
-const Footer = ({ store }) => (
+const Footer = () => (
   <p>
-    Show:{" "}
-    <FilterLink filter="SHOW_ALL" store={store}>
-      All
-    </FilterLink>{" "}
-    <FilterLink filter="SHOW_ACTIVE" store={store}>
-      Active
-    </FilterLink>{" "}
-    <FilterLink filter="SHOW_COMPLETED" store={store}>
-      Completed
-    </FilterLink>{" "}
+    Show: <FilterLink filter="SHOW_ALL">All</FilterLink>{" "}
+    <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>{" "}
+    <FilterLink filter="SHOW_COMPLETED">Completed</FilterLink>{" "}
   </p>
 );
+
 const Todo = ({ onClick, completed, text }) => (
   <li
     onClick={onClick}
@@ -126,8 +124,10 @@ const TodoList = ({ todos, onTodoClick }) => (
   </ul>
 );
 
-const AddTodo = ({ store }) => {
+let nextTodoId = 0;
+const AddTodo = () => {
   let input;
+  const store = React.useContext(AppContext); //Hook to subscribe context to this functional component
   return (
     <>
       <input ref={(node) => (input = node)} />
@@ -146,6 +146,7 @@ const AddTodo = ({ store }) => {
     </>
   );
 };
+
 const getVisibleTodos = (todos, filter) => {
   switch (filter) {
     case "SHOW_ALL":
@@ -158,15 +159,16 @@ const getVisibleTodos = (todos, filter) => {
 };
 
 class VisibleTodoList extends Component {
+  //static contextType = AppContext; // can be used this way instead of VisibleTodoList.contextType = AppContext
   componentDidMount() {
-    const { store } = this.props;
+    const store = this.context;
     this.unsubdcribe = store.subscribe(() => this.forceUpdate());
   }
   componenWillUnmount() {
     this.unsubdcribe();
   }
   render() {
-    const { store } = this.props;
+    const store = this.context;
     const { todos, visibilityFilter } = store.getState();
     return (
       <TodoList
@@ -176,19 +178,21 @@ class VisibleTodoList extends Component {
     );
   }
 }
+VisibleTodoList.contextType = AppContext; //subscribing context to this component (it receives this.context)
 
-let nextTodoId = 0;
-const TodoApp = ({ store }) => (
+const TodoApp = () => (
   <>
-    <AddTodo store={store} />
-    <VisibleTodoList store={store} />
-    <Footer store={store} />
+    <AddTodo />
+    <VisibleTodoList />
+    <Footer />
   </>
 );
 
 const { createStore } = Redux;
 
 ReactDOM.render(
-  <TodoApp store={createStore(todoApp)} />,
+  <AppContext.Provider value={createStore(todoApp)}>
+    <TodoApp />
+  </AppContext.Provider>,
   document.getElementById("root")
 );
