@@ -45,11 +45,46 @@ const todoApp = combineReducers({
   visibilityFilter,
 });
 
+// Actions Creator
+let nextTodoId = 0;
+const addTodo = (text) => {
+  return {
+    type: "ADD_TODO",
+    id: nextTodoId++,
+    text,
+  };
+};
+
+const setVisibilityFilter = (filter) => {
+  return {
+    type: "SET_VISIBILITY_FILTER",
+    filter,
+  };
+};
+
+const toggleTodo = (id) => {
+  return { type: "TOGGLE_TODO", id };
+};
+
 const { Provider, connect } = ReactRedux; //import {Provider,connect} from 'react-redux'
 
 // React code
 
-const Link = ({ active, children, onClick }) => {
+const Link = ({ active, children, onClick, filter }) => {
+  return active ? (
+    <span>{children}</span>
+  ) : (
+    <a
+      href="#"
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+    >
+      {children}
+    </a>
+  );
+  /* // same as above
   if (active) {
     return <span>{children}</span>;
   }
@@ -63,7 +98,7 @@ const Link = ({ active, children, onClick }) => {
     >
       {children}
     </a>
-  );
+  ); */
 };
 
 const mapStateToLinkProps = (state, ownProps) => {
@@ -73,11 +108,7 @@ const mapStateToLinkProps = (state, ownProps) => {
 };
 const mapDispatchToLinkProps = (dispatch, ownProps) => {
   return {
-    onClick: () =>
-      dispatch({
-        type: "SET_VISIBILITY_FILTER",
-        filter: ownProps.filter,
-      }),
+    onClick: () => dispatch(setVisibilityFilter(ownProps.filter)),
   };
 };
 const FilterLink = connect(mapStateToLinkProps, mapDispatchToLinkProps)(Link);
@@ -109,8 +140,6 @@ const TodoList = ({ todos, onTodoClick }) => (
   </ul>
 );
 
-let nextTodoId = 0;
-
 let AddTodo = ({ dispatch }) => {
   let input;
   return (
@@ -118,11 +147,7 @@ let AddTodo = ({ dispatch }) => {
       <input ref={(node) => (input = node)} />
       <button
         onClick={() => {
-          dispatch({
-            type: "ADD_TODO",
-            id: nextTodoId++,
-            text: input.value,
-          });
+          dispatch(addTodo(input.value));
           input.value = "";
         }}
       >
@@ -167,7 +192,7 @@ const mapStateToTodoListProps = (state) => {
 };
 const mapDispatchToTodoListProps = (dispatch) => {
   return {
-    onTodoClick: (id) => dispatch({ type: "TOGGLE_TODO", id }),
+    onTodoClick: (id) => dispatch(toggleTodo(id)),
   };
 };
 const VisibleTodoList = connect(
