@@ -202,10 +202,18 @@ const TodoApp = () => (
   </>
 );
 
+const persistedState = {
+  todos: [{ id: "0", text: "Welcome Back!", completed: false }],
+};
 const { createStore } = Redux;
 
+// starting the Redux store with a previously persisted state passed as a second argument to the createStore()
+// notice how the visibilityFilter key of the Redux object state is set to initial state accordingly to its specific reducer
+const store = createStore(todoApp, persistedState);
+console.log(store.getState());
+
 ReactDOM.render(
-  <Provider store={createStore(todoApp)}>
+  <Provider store={store}>
     <TodoApp />
   </Provider>,
   document.getElementById("root")
