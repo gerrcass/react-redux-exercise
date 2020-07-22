@@ -46,10 +46,11 @@ const todoApp = combineReducers({
 });
 
 // Action Creators
-let nextTodoId = 0;
+
+const { v4 } = uuid; // function to create unique identifier when ADD_TODO (avoiding numbers)
 const addTodo = (text) => ({
   type: "ADD_TODO",
-  id: nextTodoId++,
+  id: v4(),
   text,
 });
 
@@ -127,13 +128,16 @@ const Todo = ({ onClick, completed, text }) => (
   </li>
 );
 
-const TodoList = ({ todos, onTodoClick }) => (
-  <ul>
-    {todos.map((todo) => (
-      <Todo key={todo.id} onClick={() => onTodoClick(todo.id)} {...todo} />
-    ))}
-  </ul>
-);
+const TodoList = ({ todos, onTodoClick }) => {
+  console.log(store.getState());
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <Todo key={todo.id} onClick={() => onTodoClick(todo.id)} {...todo} />
+      ))}
+    </ul>
+  );
+};
 
 let AddTodo = ({ dispatch }) => {
   let input;
@@ -179,7 +183,6 @@ const getVisibleTodos = (todos, filter) => {
       return todos.filter((todo) => !todo.completed);
   }
 };
-
 const mapStateToTodoListProps = (state) => ({
   todos: getVisibleTodos(state.todos, state.visibilityFilter),
 });
@@ -202,15 +205,53 @@ const TodoApp = () => (
   </>
 );
 
-const persistedState = {
-  todos: [{ id: "0", text: "Welcome Back!", completed: false }],
+//const { loadState } = require("./localStorage");
+//import { loadState } from "./localStorage.js";
+
+// LocalStorage Browser API
+const loadState = () => {
+  try {
+    const serializedState = localStorage.getItem("state");
+    if (serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    return undefined;
+  }
 };
+const saveState = (state) => {
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem("state", serializedState);
+  } catch (err) {
+    // Do some logger or something
+    console.log("Something went wrong. ", err);
+  }
+};
+
+/* const persistedState = {
+  todos: [{ id: "0", text: "Welcome Back!", completed: false }],
+}; */
+const persistedState = loadState();
+console.log(persistedState);
+
 const { createStore } = Redux;
 
 // starting the Redux store with a previously persisted state passed as a second argument to the createStore()
 // notice how the visibilityFilter key of the Redux object state is set to initial state accordingly to its specific reducer
 const store = createStore(todoApp, persistedState);
-console.log(store.getState());
+
+// lodash throttle() invokes func at most once per every wait milliseconds: _.throttle(func, [wait=0], [options={}])
+// this is to avoid calling saveState() too often because it uses the expansive stringify operation.
+store.subscribe(
+  _.throttle(() => {
+    saveState({
+      // only the todos key gets stored in localStorage (visibilityFilter gets its default state from reducer when creating the store the first time)
+      todos: store.getState().todos,
+    });
+  }, 1000)
+);
 
 ReactDOM.render(
   <Provider store={store}>
