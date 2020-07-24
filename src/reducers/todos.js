@@ -28,3 +28,16 @@ const todos = (state = [], action) => {
 };
 
 export default todos;
+
+// The default export is always the reducer function, but any named export starting with get is a so called SELECTOR,
+// that is to say a function that prepares the data to be displayed by the UI.
+export const getVisibleTodos = (state, filter) => {
+  switch (filter) {
+    case "all":
+      return state;
+    case "completed":
+      return state.filter((todo) => todo.completed);
+    case "active":
+      return state.filter((todo) => !todo.completed);
+  }
+};
