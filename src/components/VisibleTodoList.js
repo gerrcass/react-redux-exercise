@@ -13,7 +13,14 @@ const getVisibleTodos = (todos, filter) => {
       return todos.filter((todo) => !todo.completed);
   }
 };
-const mapStateToProps = (state, { match: { filter } }) => ({
+const mapStateToProps = (
+  state,
+  {
+    match: {
+      params: { filter },
+    },
+  }
+) => ({
   todos: getVisibleTodos(state.todos, filter || "all"),
 });
 const mapDispatchToProps = (dispatch) => ({
