@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 
-// getting all the named exports in 'fromTodos' (these are basically the selectors)
+// getting all the named exports in 'fromTodos' (these are basically to encasulate selectors down bellow)
 import todos, * as fromTodos from "./todos";
 
 const todoApp = combineReducers({
