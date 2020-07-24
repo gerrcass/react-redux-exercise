@@ -10,6 +10,7 @@ module.exports = {
     contentBase: path.join(__dirname, "build"),
     compress: true,
     port: 3000,
+    historyApiFallback: true, //serve index.html in place of any 404 response
   },
   resolve: {
     extensions: [".js", ".jsx"],
