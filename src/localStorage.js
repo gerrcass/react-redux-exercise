@@ -6,6 +6,7 @@ export const loadState = () => {
     }
     return JSON.parse(serializedState);
   } catch (err) {
+    console.log("Error loadState()>>", err);
     return undefined;
   }
 };

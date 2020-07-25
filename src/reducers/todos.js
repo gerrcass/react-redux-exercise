@@ -1,4 +1,14 @@
 import { combineReducers } from "redux";
+
+/* const combineReducers = (reducers) => {
+  return (state = {}, action) => {
+    return Object.keys(reducers).reduce((nextState, key) => {
+      nextState[key] = reducers[key](state[key], action);
+      return nextState;
+    }, {});
+  };
+}; */
+
 import todo from "./todo";
 
 const byId = (state = {}, action) => {
@@ -7,7 +17,7 @@ const byId = (state = {}, action) => {
     case "TOGGLE_TODO":
       return {
         ...state,
-        [action.id]: todo([action.id], action),
+        [action.id]: todo(state[action.id], action),
       };
     default:
       return state;
@@ -23,7 +33,7 @@ const allIds = (state = [], action) => {
   }
 };
 
-const todos = combineReducers(byId, allIds);
+const todos = combineReducers({ byId, allIds });
 
 export default todos;
 // The default export is always the reducer function, but any named export starting with get is a so called SELECTOR,
@@ -32,7 +42,9 @@ export default todos;
 const getAllTodos = (state) => state.allIds.map((id) => state.byId[id]);
 
 export const getVisibleTodos = (state, filter) => {
+  //const allTodos = Object.values(state.byId);
   const allTodos = getAllTodos(state);
+
   switch (filter) {
     case "all":
       return allTodos;
