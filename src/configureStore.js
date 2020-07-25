@@ -23,23 +23,9 @@ const addLoggingToDispatch = (store) => {
 const configureStore = () => {
   const persistedState = loadState();
 
-  /*  const persistedState = {
-    todos: {
-      allIds: ["c2442a37-f742-40ed-ab53-0152ec070555"],
-      byId: {
-        "c2442a37-f742-40ed-ab53-0152ec070555": {
-          type: "ADD_TODO",
-          id: "c2442a37-f742-40ed-ab53-0152ec070555",
-          text: "hardcoded",
-        },
-      },
-    },
-  }; */
-
   /* starting the Redux store with a previously persisted state passed as a second argument to the createStore()
   notice how the localStorage only store "todos" when saveState() is called (never "visibilityFilter"). This results 
    in the Redux object state setting up the initial state accordingly to its specific reducer. */
-
   const store = createStore(todoApp, persistedState);
 
   if (process.env.NODE_ENV !== "production") {

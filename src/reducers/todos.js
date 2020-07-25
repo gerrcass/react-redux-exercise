@@ -39,11 +39,12 @@ export default todos;
 // The default export is always the reducer function, but any named export starting with get is a so called SELECTOR,
 // that is to say a function that prepares the data to be displayed by the UI.
 
-const getAllTodos = (state) => state.allIds.map((id) => state.byId[id]);
+/* //function replaced by Object.values() bellow
+const getAllTodos = (state) => state.allIds.map((id) => state.byId[id]); */
 
 export const getVisibleTodos = (state, filter) => {
-  //const allTodos = Object.values(state.byId);
-  const allTodos = getAllTodos(state);
+  //const allTodos = getAllTodos(state);
+  const allTodos = Object.values(state.byId);
 
   switch (filter) {
     case "all":
