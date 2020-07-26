@@ -18,12 +18,27 @@ const addLoggingToDispatch = (store) => {
   };
 };
 
+// thunk alike middleware
+const addPromiseSupportToDispatch = (store) => {
+  const rawDispatch = store.dispatch;
+  return (action) => {
+    if (typeof action.then === "function") {
+      return action.then(rawDispatch);
+      //acition.then(rawDispatch) === action.then(actionObject => rawDispatch(actionObject))
+    }
+    return rawDispatch;
+    // rawDispatch === rawDispatch(action)
+  };
+};
+
 const configureStore = () => {
   const store = createStore(todoApp);
 
   if (process.env.NODE_ENV !== "production") {
     store.dispatch = addLoggingToDispatch(store);
   }
+
+  store.dispatch = addPromiseSupportToDispatch(store);
 
   return store;
 };

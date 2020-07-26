@@ -33,6 +33,14 @@ const allIds = (state = [], action) => {
   }
 };
 
+/* case 'RECEIVE_TODOS':
+      const todosTorender= getVisibleTodos(action.todos,action.filter)
+      todosTorender.forEach(todo => {[todo.id]: })
+      return {
+        ...state,
+        [todosTorender.id]: ...todosTorender
+      } */
+
 const todos = combineReducers({ byId, allIds });
 
 export default todos;
