@@ -17,6 +17,10 @@ class VisibleTodoList extends React.Component {
   }
   fetchData() {
     const { filter, fetchTodos } = this.props;
+
+    /* .then() can be used to schedule some code afterward since a Promise
+    was always returned in this particular async action creator (thunk):
+    fetchTodos(filter).then(() => console.log("done!")); */
     fetchTodos(filter);
   }
 
