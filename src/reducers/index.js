@@ -1,16 +1,28 @@
+/* const combineReducers = (reducers) => {
+  return (state = {}, action) => {
+    return Object.keys(reducers).reduce((nextState, key) => {
+      nextState[key] = reducers[key](state[key], action);
+      return nextState;
+    }, {});
+  };
+}; */
 import { combineReducers } from "redux";
-import todos, * as fromTodos from "./todos";
+import byId, * as fromById from "./byId";
+import createList, * as fromList from "./createList";
 
-const todoApp = combineReducers({
-  todos: todos,
+const listByFilter = combineReducers({
+  all: createList("all"),
+  active: createList("active"),
+  completed: createList("completed"),
 });
 
-export default todoApp;
+const todos = combineReducers({ byId, listByFilter });
 
-// all function selectors start with "get" by convention
+export default todos;
+// The default export is always the reducer function, but any named export starting with get is a so called SELECTOR,
+// that is to say a function that prepares the data to be displayed by the UI.
 
-// this pattern avoid the compoonents to rely on the state shape. Here we encapsulate the selector
-// and manipulate it so that the final reducer get the state in the form that it expected (a little
-// bit of separation of concerns)
-export const getVisibleTodos = (state, filter) =>
-  fromTodos.getVisibleTodos(state.todos, filter);
+export const getVisibleTodos = (state, filter) => {
+  const ids = fromList.getIds(state.listByFilter[filter]);
+  return ids.map((id) => fromById.getTodo(state.byId, id));
+};
