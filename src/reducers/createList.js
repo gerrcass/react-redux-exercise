@@ -11,7 +11,7 @@ const createList = (filter) => {
         return state;
     }
   };
-  const getIsFetching = (state = false, action) => {
+  const isFetching = (state = false, action) => {
     if (action.filter !== filter) {
       return state;
     }
@@ -25,10 +25,10 @@ const createList = (filter) => {
     }
   };
 
-  return combineReducers({ ids, getIsFetching });
+  return combineReducers({ ids, isFetching });
 };
 
 export default createList;
 
 export const getIds = (state) => state.ids;
-export const getIsFetching = (state) => state.getIsFetching;
+export const getIsFetching = (state) => state.isFetching;
