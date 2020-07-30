@@ -1,6 +1,6 @@
 const byId = (state = {}, action) => {
   switch (action.type) {
-    case "RECEIVE_TODOS":
+    case "FETCH_TODOS_SUCCESS":
       // since "nextState" is a shallow copy, and while still a limitation, operation bellow it's only one level
       // deep and it doesn't modify any of the original state object (reducer function stays pure). Re-assignments
       // into the loop are actually efficient.

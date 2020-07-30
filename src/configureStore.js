@@ -3,8 +3,8 @@ import thunk from "redux-thunk";
 import { createLogger } from "redux-logger";
 import todoApp from "./reducers";
 
-/* a basic and working implementation of a thunk middleware
-(redux-package do a better job)
+/* //a basic and working implementation of a thunk middleware
+//(redux-package do a better job)
 const thunk = (store) => (next) => (action) => {
   typeof action === "function"
     ? action(store.dispatch, store.getState)
