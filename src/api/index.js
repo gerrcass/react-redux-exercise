@@ -26,7 +26,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export const fetchTodos = (filter) =>
   delay(600).then(() => {
     //throwing sometimes so that error handling can be tested
-    if (Math.random() > 0.5) {
+    if (Math.random() > 0.9) {
       throw new Error("Boom");
     }
     switch (filter) {
@@ -41,6 +41,7 @@ export const fetchTodos = (filter) =>
     }
   });
 
+// both fake endpoints below are returning data just like a real API would.
 export const addTodo = (text) =>
   delay(600).then(() => {
     const todo = {
