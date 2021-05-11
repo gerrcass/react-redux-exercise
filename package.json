@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/gerrcass/react-redux-exercise#readme",
   "dependencies": {
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "normalizr": "^3.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
